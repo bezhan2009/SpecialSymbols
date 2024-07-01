@@ -1,0 +1,37 @@
+import Control.Monad (forever)
+import Data.List (intercalate)
+
+data Person = Person { name :: String, age :: Int }
+
+people :: [Person]
+people = [ Person "Алексей" 30
+         , Person "Мария" 25
+         , Person "Иван" 40
+         ]
+
+getPeople :: [Person] -> IO ()
+getPeople ps = mapM_ (putStrLn . showPerson) ps
+
+getPerson :: [Person] -> Int -> IO ()
+getPerson ps idx
+  | idx >= 0 && idx < length ps = putStrLn $ showPerson (ps !! idx)
+  | otherwise = putStrLn "Некорректный индекс"
+
+showPerson :: Person -> String
+showPerson (Person n a) = "Name: " ++ n ++ ", Age: " ++ show a
+
+main :: IO ()
+main = forever $ do
+  putStrLn "Главное меню"
+  putStrLn "1. Вывести информацию о всех людях"
+  putStrLn "2. Вывести информацию о конкретном человеке"
+  putStrLn "0. Выйти из программы"
+  cmd <- readLn
+  case cmd of
+    1 -> getPeople people
+    2 -> do
+      putStrLn "Введите индекс человека (0-2): "
+      idx <- readLn
+      getPerson people idx
+    0 -> return ()
+    _ -> putStrLn "Неизвестная команда"
