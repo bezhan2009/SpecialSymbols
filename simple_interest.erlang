@@ -1,0 +1,45 @@
+-module(main).
+-export([start/0, get_people/1, get_person/2]).
+
+start() ->
+    People = [
+        {<<"Алексей">>, 30},
+        {<<"Мария">>, 25},
+        {<<"Иван">>, 40}
+    ],
+    loop(People).
+
+loop(People) ->
+    io:format("Главное меню~n"),
+    io:format("1. Вывести информацию о всех людях~n"),
+    io:format("2. Вывести информацию о конкретном человеке~n"),
+    io:format("0. Выйти из программы~n"),
+    {ok, [Cmd]} = io:fread("", "~d"),
+    case Cmd of
+        1 ->
+            get_people(People),
+            loop(People);
+        2 ->
+            io:format("Введите индекс человека (0-2): "),
+            {ok, [Index]} = io:fread("", "~d"),
+            if Index >= 0 and Index < 3 ->
+                get_person(People, Index);
+               true ->
+                io:format("Некорректный индекс~n")
+            end,
+            loop(People);
+        0 ->
+            ok;
+        _ ->
+            io:format("Неизвестная команда~n"),
+            loop(People)
+    end.
+
+get_people(People) ->
+    lists:foreach(fun({Name, Age}) ->
+        io:format("Name: ~s, Age: ~p~n", [Name, Age])
+    end, People).
+
+get_person(People, Index) ->
+    {Name, Age} = lists:nth(Index + 1, People),
+    io:format("Name: ~s, Age: ~p~n", [Name, Age]).
